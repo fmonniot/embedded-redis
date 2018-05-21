@@ -127,6 +127,8 @@ abstract class AbstractRedisInstance implements Redis {
 
     protected abstract Pattern redisReadyPattern();
 
+    public abstract void setRedisReadyPat(Pattern redisReadyPat);
+
     private ProcessBuilder createRedisProcessBuilder() {
         File executable = new File(args.get(0));
         ProcessBuilder pb = new ProcessBuilder(args)

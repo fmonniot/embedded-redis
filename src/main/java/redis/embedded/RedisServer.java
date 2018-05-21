@@ -1,5 +1,6 @@
 package redis.embedded;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import redis.embedded.exceptions.RedisBuildingException;
@@ -15,10 +16,7 @@ import java.util.regex.Pattern;
 
 public class RedisServer extends AbstractRedisInstance {
 
-    private static final Pattern REDIS_READY_PATTERN = Pattern.compile(
-            "(?:The server is now ready to accept connections on port)" +   // 3.2.1, 2.8.24
-            "|(?:Ready to accept connections)" // 4.0.2
-    );
+    private Pattern redisReadyPat = RedisExecProvider.REDIS_READY_PATTERN;
 
     private static final int DEFAULT_REDIS_PORT = 6379;
 
@@ -37,6 +35,7 @@ public class RedisServer extends AbstractRedisInstance {
 
     public RedisServer(RedisExecProvider redisExecProvider, int port) throws IOException {
         super(port);
+        this.redisReadyPat = redisExecProvider.getExecutableStartPattern();
         this.args = Arrays.asList(
                 redisExecProvider.get().getAbsolutePath(),
                 "--port", Integer.toString(port)
@@ -46,6 +45,12 @@ public class RedisServer extends AbstractRedisInstance {
     RedisServer(List<String> args, int port) {
         super(port);
         this.args = new ArrayList<>(args);
+    }
+
+    @Override
+    public void setRedisReadyPat(Pattern redisReadyPat) {
+        Preconditions.checkNotNull(redisReadyPat);
+        this.redisReadyPat = redisReadyPat;
     }
 
     /**
@@ -60,7 +65,7 @@ public class RedisServer extends AbstractRedisInstance {
 
     @Override
     protected Pattern redisReadyPattern() {
-        return REDIS_READY_PATTERN;
+        return redisReadyPat;
     }
 
     @SuppressWarnings("unused")
@@ -138,6 +143,7 @@ public class RedisServer extends AbstractRedisInstance {
             RedisServer redisServer = new RedisServer(args, port);
             redisServer.setLogProcessOutput(logProcessOutput);
             redisServer.setStartupTimeoutMs(startupTimeoutMs);
+            redisServer.setRedisReadyPat(redisExecProvider.getExecutableStartPattern());
             return redisServer;
         }
 

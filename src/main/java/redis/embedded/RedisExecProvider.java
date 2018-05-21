@@ -2,18 +2,22 @@ package redis.embedded;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import redis.embedded.util.Architecture;
-import redis.embedded.util.JarUtil;
-import redis.embedded.util.OS;
-import redis.embedded.util.OsArchitecture;
+import redis.embedded.util.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class RedisExecProvider {
 
-    private final Map<OsArchitecture, String> executables = Maps.newHashMap();
+    private final Map<OsArchitecture, RedisExecutor> executables = Maps.newHashMap();
+    public final static Pattern REDIS_READY_PATTERN = Pattern.compile(
+            "(?:The server is now ready to accept connections on port)" +   // 3.2.1, 2.8.24
+                    "|(?:Ready to accept connections)"  + // 4.0.2
+                    "|(?:Sentinel ID is)" +  // 3.2.1, 4.0.2
+                    "|(?:Sentinel runid is)" // 2.8.24
+    );
 
     /**
      * @return a new RedisExecProvider instance
@@ -33,10 +37,10 @@ public class RedisExecProvider {
     }
 
     private void initExecutables() {
-        executables.put(OsArchitecture.UNIX_x86_64, "redis-server-3.0.7");
+        executables.put(OsArchitecture.UNIX_x86_64, new RedisExecutor("redis-server-3.0.7", REDIS_READY_PATTERN));
 
-        executables.put(OsArchitecture.MAC_OS_X_x86, "redis-server-3.0.7-darwin");
-        executables.put(OsArchitecture.MAC_OS_X_x86_64, "redis-server-3.0.7-darwin");
+        executables.put(OsArchitecture.MAC_OS_X_x86, new RedisExecutor("redis-server-3.0.7-darwin", REDIS_READY_PATTERN));
+        executables.put(OsArchitecture.MAC_OS_X_x86_64, new RedisExecutor("redis-server-3.0.7-darwin", REDIS_READY_PATTERN));
     }
 
     public RedisExecProvider override(OS os, String executable) {
@@ -49,17 +53,28 @@ public class RedisExecProvider {
 
     public RedisExecProvider override(OS os, Architecture arch, String executable) {
         Preconditions.checkNotNull(executable);
-        executables.put(new OsArchitecture(os, arch), executable);
+        executables.put(new OsArchitecture(os, arch), new RedisExecutor(executable, REDIS_READY_PATTERN));
+        return this;
+    }
+
+    public RedisExecProvider override(OS os, Architecture arch, RedisExecutor redisExec) {
+        Preconditions.checkNotNull(redisExec);
+        executables.put(new OsArchitecture(os, arch), redisExec);
         return this;
     }
 
     public File get() throws IOException {
         OsArchitecture osArch = OsArchitecture.detect();
-        String executablePath = executables.get(osArch);
+        String executablePath = executables.get(osArch).getExecutableName();
         return fileExists(executablePath) ?
                 new File(executablePath) :
                 JarUtil.extractExecutableFromJar(executablePath);
 
+    }
+
+    public Pattern getExecutableStartPattern() {
+        OsArchitecture osArch = OsArchitecture.detect();
+        return executables.get(osArch).getStartPattern();
     }
 
     public RedisExecProvider copy() {
