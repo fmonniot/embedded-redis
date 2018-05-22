@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class RedisServer extends AbstractRedisInstance {
 
-    private Pattern redisReadyPat = RedisExecProvider.REDIS_READY_PATTERN;
+    private Pattern redisReadyPat = RedisExecProvider.DEFAULT_REDIS_READY_PATTERN;
 
     private static final int DEFAULT_REDIS_PORT = 6379;
 
@@ -47,8 +47,7 @@ public class RedisServer extends AbstractRedisInstance {
         this.args = new ArrayList<>(args);
     }
 
-    @Override
-    public void setRedisReadyPat(Pattern redisReadyPat) {
+    void setRedisReadyPat(Pattern redisReadyPat) {
         Preconditions.checkNotNull(redisReadyPat);
         this.redisReadyPat = redisReadyPat;
     }

@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 
 public class RedisExecProvider {
 
-    private final Map<OsArchitecture, RedisExecutor> executables = Maps.newHashMap();
-    public final static Pattern REDIS_READY_PATTERN = Pattern.compile(
+    private final Map<OsArchitecture, RedisExecutable> executables = Maps.newHashMap();
+    public final static Pattern DEFAULT_REDIS_READY_PATTERN = Pattern.compile(
             "(?:The server is now ready to accept connections on port)" +   // 3.2.1, 2.8.24
                     "|(?:Ready to accept connections)"  + // 4.0.2
                     "|(?:Sentinel ID is)" +  // 3.2.1, 4.0.2
@@ -37,10 +37,10 @@ public class RedisExecProvider {
     }
 
     private void initExecutables() {
-        executables.put(OsArchitecture.UNIX_x86_64, new RedisExecutor("redis-server-3.0.7", REDIS_READY_PATTERN));
+        executables.put(OsArchitecture.UNIX_x86_64, new RedisExecutable("redis-server-3.0.7", DEFAULT_REDIS_READY_PATTERN));
 
-        executables.put(OsArchitecture.MAC_OS_X_x86, new RedisExecutor("redis-server-3.0.7-darwin", REDIS_READY_PATTERN));
-        executables.put(OsArchitecture.MAC_OS_X_x86_64, new RedisExecutor("redis-server-3.0.7-darwin", REDIS_READY_PATTERN));
+        executables.put(OsArchitecture.MAC_OS_X_x86, new RedisExecutable("redis-server-3.0.7-darwin", DEFAULT_REDIS_READY_PATTERN));
+        executables.put(OsArchitecture.MAC_OS_X_x86_64, new RedisExecutable("redis-server-3.0.7-darwin", DEFAULT_REDIS_READY_PATTERN));
     }
 
     public RedisExecProvider override(OS os, String executable) {
@@ -53,11 +53,11 @@ public class RedisExecProvider {
 
     public RedisExecProvider override(OS os, Architecture arch, String executable) {
         Preconditions.checkNotNull(executable);
-        executables.put(new OsArchitecture(os, arch), new RedisExecutor(executable, REDIS_READY_PATTERN));
+        executables.put(new OsArchitecture(os, arch), new RedisExecutable(executable, DEFAULT_REDIS_READY_PATTERN));
         return this;
     }
 
-    public RedisExecProvider override(OS os, Architecture arch, RedisExecutor redisExec) {
+    public RedisExecProvider override(OS os, Architecture arch, RedisExecutable redisExec) {
         Preconditions.checkNotNull(redisExec);
         executables.put(new OsArchitecture(os, arch), redisExec);
         return this;

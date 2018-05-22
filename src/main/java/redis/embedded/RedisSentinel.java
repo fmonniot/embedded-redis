@@ -12,18 +12,14 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class RedisSentinel extends AbstractRedisInstance {
-    private Pattern redisReadyPat = Pattern.compile(
-            "(?:Sentinel ID is)" +  // 3.2.1, 4.0.2
-            "|(?:Sentinel runid is)" // 2.8.24
-    );
+    private Pattern redisReadyPat = RedisExecProvider.DEFAULT_REDIS_READY_PATTERN;
 
     public RedisSentinel(List<String> args, int port) {
         super(port);
         this.args = new ArrayList<>(args);
     }
 
-    @Override
-    public void setRedisReadyPat(Pattern redisReadyPat) {
+    void setRedisReadyPat(Pattern redisReadyPat) {
         Preconditions.checkNotNull(redisReadyPat);
         this.redisReadyPat = redisReadyPat;
     }

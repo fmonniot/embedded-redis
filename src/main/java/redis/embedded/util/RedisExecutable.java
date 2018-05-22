@@ -2,11 +2,11 @@ package redis.embedded.util;
 
 import java.util.regex.Pattern;
 
-public class RedisExecutor {
+public class RedisExecutable {
     private String executableName;
     private Pattern startPattern;
 
-    public RedisExecutor(String exeName, Pattern startPattern) {
+    public RedisExecutable(String exeName, Pattern startPattern) {
         this.executableName = exeName;
         this.startPattern = startPattern;
     }
@@ -23,14 +23,14 @@ public class RedisExecutor {
         return startPattern.pattern();
     }
 
-    public RedisExecutor copy() {
-        return new RedisExecutor(executableName, startPattern);
+    public RedisExecutable copy() {
+        return new RedisExecutable(executableName, startPattern);
     }
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof RedisExecutor && ((RedisExecutor) obj).executableName.contentEquals(executableName) &&
-                ((RedisExecutor)obj).startPattern.pattern().contentEquals(startPattern.pattern());
+        return obj instanceof RedisExecutable && ((RedisExecutable) obj).executableName.contentEquals(executableName) &&
+                ((RedisExecutable)obj).startPattern.pattern().contentEquals(startPattern.pattern());
     }
 
     @Override
