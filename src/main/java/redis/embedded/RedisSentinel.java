@@ -12,14 +12,16 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class RedisSentinel extends AbstractRedisInstance {
-    private static final Pattern REDIS_READY_PATTERN = Pattern.compile(
-            "(?:Sentinel ID is)" +  // 3.2.1, 4.0.2
-            "|(?:Sentinel runid is)" // 2.8.24
-    );
+    private Pattern redisReadyPat = RedisExecProvider.DEFAULT_REDIS_READY_PATTERN;
 
     public RedisSentinel(List<String> args, int port) {
         super(port);
         this.args = new ArrayList<>(args);
+    }
+
+    void setRedisReadyPat(Pattern redisReadyPat) {
+        Preconditions.checkNotNull(redisReadyPat);
+        this.redisReadyPat = redisReadyPat;
     }
 
     @Deprecated
@@ -29,7 +31,7 @@ public class RedisSentinel extends AbstractRedisInstance {
 
     @Override
     protected Pattern redisReadyPattern() {
-        return REDIS_READY_PATTERN;
+        return redisReadyPat;
     }
 
     @SuppressWarnings("unused")
@@ -137,6 +139,7 @@ public class RedisSentinel extends AbstractRedisInstance {
             RedisSentinel redisSentinel = new RedisSentinel(args, port);
             redisSentinel.setLogProcessOutput(logProcessOutput);
             redisSentinel.setStartupTimeoutMs(startupTimeoutMs);
+            redisSentinel.setRedisReadyPat(redisExecProvider.getExecutableStartPattern());
             return redisSentinel;
         }
 
