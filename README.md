@@ -1,4 +1,4 @@
-# embedded-redis [![Build Status](https://travis-ci.org/fmonniot/embedded-redis.svg?branch=master)](https://travis-ci.org/fmonniot/embedded-redis)
+# embedded-redis [![Build Status](https://travis-ci.org/fmonniot/embedded-redis.svg?branch=master)](https://travis-ci.org/fmonniot/embedded-redis) [ ![Download](https://api.bintray.com/packages/fmonniot/maven/embedded-redis/images/download.svg) ](https://bintray.com/fmonniot/maven/embedded-redis/_latestVersion)
 
 Redis embedded server for Java integration testing
 
