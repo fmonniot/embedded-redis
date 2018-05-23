@@ -37,10 +37,10 @@ public class RedisExecProvider {
     }
 
     private void initExecutables() {
-        executables.put(OsArchitecture.UNIX_x86_64, new RedisExecutable("redis-server-3.0.7", DEFAULT_REDIS_READY_PATTERN));
+        executables.put(OsArchitecture.UNIX_x86_64, RedisExecutable.build("redis-server-3.0.7", DEFAULT_REDIS_READY_PATTERN));
 
-        executables.put(OsArchitecture.MAC_OS_X_x86, new RedisExecutable("redis-server-3.0.7-darwin", DEFAULT_REDIS_READY_PATTERN));
-        executables.put(OsArchitecture.MAC_OS_X_x86_64, new RedisExecutable("redis-server-3.0.7-darwin", DEFAULT_REDIS_READY_PATTERN));
+        executables.put(OsArchitecture.MAC_OS_X_x86, RedisExecutable.build("redis-server-3.0.7-darwin", DEFAULT_REDIS_READY_PATTERN));
+        executables.put(OsArchitecture.MAC_OS_X_x86_64, RedisExecutable.build("redis-server-3.0.7-darwin", DEFAULT_REDIS_READY_PATTERN));
     }
 
     public RedisExecProvider override(OS os, String executable) {
@@ -53,7 +53,7 @@ public class RedisExecProvider {
 
     public RedisExecProvider override(OS os, Architecture arch, String executable) {
         Preconditions.checkNotNull(executable);
-        executables.put(new OsArchitecture(os, arch), new RedisExecutable(executable, DEFAULT_REDIS_READY_PATTERN));
+        executables.put(new OsArchitecture(os, arch), RedisExecutable.build(executable, DEFAULT_REDIS_READY_PATTERN));
         return this;
     }
 

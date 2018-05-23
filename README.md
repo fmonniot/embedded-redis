@@ -1,5 +1,4 @@
-embedded-redis [![Build Status](https://travis-ci.org/fmonniot/embedded-redis.svg?branch=master)](https://travis-ci.org/fmonniot/embedded-redis)
-==============
+# embedded-redis [![Build Status](https://travis-ci.org/fmonniot/embedded-redis.svg?branch=master)](https://travis-ci.org/fmonniot/embedded-redis)
 
 Redis embedded server for Java integration testing
 
@@ -14,20 +13,20 @@ _It also add support for some other features:_
 * _Let user access Redis instances logs_
 * _More consistent use of PortProvider interface_
 
-Maven dependency
-==============
+# Maven dependency
 
 This library is available on jCenter:
 ```xml
 <dependency>
   <groupId>eu.monniot.redis</groupId>
   <artifactId>embedded-redis</artifactId>
-  <version>1.2.2</version>
+  <version>1.6.0</version>
 </dependency>
 ```
 
-Usage
-==============
+# Usage
+
+## Redis Server
 
 Running RedisServer is as simple as:
 ```java
@@ -44,7 +43,7 @@ for the complete list of default binaries paths).
 You can also provide RedisServer with your own executable:
 ```java
 // Give an OS-independent matrix
-RedisExecProvider provider = RedisExecProvider.defaultProvider()
+RedisExecProvider provider = RedisExecProvider.build()
   .override(OS.UNIX, "/path/to/unix/redis")
   .override(OS.WINDOWS, Architecture.x86, "/path/to/windows/redis")
   .override(OS.Windows, Architecture.x86_64, "/path/to/windows/redis")
@@ -151,14 +150,24 @@ cluster.start();
 The above will create and start a cluster with sentinels on ports ```26739, 26912```, first replication group on ```6667, 6668```,
 second replication group on ```6387, 6379``` and third replication group on ephemeral ports.
 
+## Redis version
 
-License
-==============
+Since this library doesn't provides binary by default, and thanks to @xhoong, we can now further customize redis executables
+and the pattern used to detect when they became available. This is fairly useful when using a version of redis not supported
+by this library:
+
+```java
+RedisExecProvider provider = RedisExecProvider.build()
+  .override(OS.UNIX, Architecture.x86_64, RedisExecutable.build("redis-4.2-bin", "Ready to accept connections"))
+```
+
+# License
+
 Licensed under the Apache License, Version 2.0
 
 
-Contributors
-==============
+# Contributors
+
  * François Monniot ([@fmonniot](https://github.com/fmonniot))
  * Krzysztof Styrc ([@kstyrc](https://github.com/kstyrc))
  * Piotr Turek ([@turu](https://github.com/turu))
@@ -167,3 +176,4 @@ Contributors
  * Sean Simonsen ([@SeanSimonsen](https://github.com/SeanSimonsen))
  * Rob Winch ([@rwinch](https://github.com/rwinch))
  * Pavel Moukhataev ([@mpashka](https://github.com/mpashka))
+ * Xavier L. ([@khoong](https://github.com/xhoong))

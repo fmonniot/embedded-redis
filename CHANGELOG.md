@@ -1,3 +1,5 @@
+This project is using GitHub releases from version 1.4.0 onward for changes.
+
 ## 1.4.0
 
  * Provides a `PortProvider#copy()` method to make a new copy of the `PortProvider` based on its constructor arguments (it will NOT copy the current state of the iterator) 

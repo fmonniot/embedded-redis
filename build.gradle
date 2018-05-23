@@ -5,7 +5,7 @@ plugins {
 }
 
 def libGroup = 'eu.monniot.redis'
-def libVersion = '1.5.1'
+def libVersion = '1.6.0'
 def libArtifact = 'embedded-redis'
 
 rootProject.ext.libGroup = libGroup

@@ -6,7 +6,11 @@ public class RedisExecutable {
     private String executableName;
     private Pattern startPattern;
 
-    public RedisExecutable(String exeName, Pattern startPattern) {
+    public static RedisExecutable build(String execName, Pattern startPattern) {
+        return new RedisExecutable(execName, startPattern);
+    }
+
+    private RedisExecutable(String exeName, Pattern startPattern) {
         this.executableName = exeName;
         this.startPattern = startPattern;
     }
